@@ -1,0 +1,14 @@
+name: ticket-queue-sim
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - simpy=4.1.1
+  - numpy=1.26.4
+  - pandas=2.2.2
+  - matplotlib=3.8.4
+  - scipy=1.13.1
+  - seaborn=0.13.2
+  - jupyter=1.0.0
+  - ipykernel=6.29.4
