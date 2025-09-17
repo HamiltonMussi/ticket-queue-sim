@@ -81,14 +81,14 @@ class TicketQueueSimulator:
         """Run simulation"""
         env = simpy.Environment()
         queue = simpy.Store(env)
-        workers = simpy.Resource(env, capacity=200)
+        workers = simpy.Resource(env, capacity=self.config['num_workers'])
         
         # Start processes
         env.process(self.job_generator(env, queue))
         env.process(self.monitor(env, queue))
         
-        # Start 200 workers
-        for i in range(200):
+        # Start workers
+        for i in range(self.config['num_workers']):
             env.process(self.worker(env, queue, workers))
         
         # Run simulation
@@ -99,5 +99,6 @@ class TicketQueueSimulator:
             completed_jobs=self.completed_jobs,
             queue_samples=self.queue_samples,
             worker_busy_time=self.worker_busy_time,
-            simulation_time=simulation_time
+            simulation_time=simulation_time,
+            num_workers=self.config['num_workers']
         )

@@ -3,6 +3,9 @@ Configuration parameters for simulation based on real system data
 """
 
 SCENARIO = {
+    # System capacity
+    'num_workers': 200,
+
     # Arrival process
     'lambda_total': 0.0315,
 
