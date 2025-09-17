@@ -19,7 +19,6 @@ class Job:
     arrival_time: float
     start_time: float = None
     finish_time: float = None
-    timed_out: bool = False
     
     @property
     def response_time(self) -> float:
@@ -64,12 +63,6 @@ class Metrics:
             return 0.0
         return sum(length for _, length in self.queue_samples) / len(self.queue_samples)
     
-    def get_timeout_rate(self) -> float:
-        """Percentage of jobs that timed out"""
-        if not self.completed_jobs:
-            return 0.0
-        timed_out = sum(1 for job in self.completed_jobs if job.timed_out)
-        return (timed_out / len(self.completed_jobs)) * 100
     
     def get_W_by_type(self, job_type: JobType) -> float:
         """Average response time by job type"""

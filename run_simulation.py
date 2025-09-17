@@ -45,14 +45,12 @@ def analyze_results(results, scenario_name):
     X_values = [r.get_X() for r in results]
     rho_values = [r.get_rho() for r in results]
     L_values = [r.get_L() for r in results]
-    timeout_rates = [r.get_timeout_rate() for r in results]
 
     # Calculate confidence intervals
     W_ci = confidence_interval(W_values)
     X_ci = confidence_interval(X_values)
     rho_ci = confidence_interval(rho_values)
     L_ci = confidence_interval(L_values)
-    timeout_ci = confidence_interval(timeout_rates)
 
     print(f"W (avg response time): {np.mean(W_values):.2f} ± {np.std(W_values):.2f} seconds")
     print(f"  95% CI: [{W_ci[0]:.2f}, {W_ci[1]:.2f}]")
@@ -62,8 +60,6 @@ def analyze_results(results, scenario_name):
     print(f"  95% CI: [{rho_ci[0]:.3f}, {rho_ci[1]:.3f}]")
     print(f"L (avg queue length): {np.mean(L_values):.1f} ± {np.std(L_values):.1f}")
     print(f"  95% CI: [{L_ci[0]:.1f}, {L_ci[1]:.1f}]")
-    print(f"Timeout rate: {np.mean(timeout_rates):.2f}% ± {np.std(timeout_rates):.2f}%")
-    print(f"  95% CI: [{timeout_ci[0]:.2f}%, {timeout_ci[1]:.2f}%]")
 
     # By job type with confidence intervals
     print("\nBy Job Type:")
@@ -83,11 +79,11 @@ def analyze_results(results, scenario_name):
         'W': np.mean(W_values),
         'X': np.mean(X_values),
         'rho': np.mean(rho_values),
-        'timeout_rate': np.mean(timeout_rates),
+        'L': np.mean(L_values),
         'W_ci': W_ci,
         'X_ci': X_ci,
         'rho_ci': rho_ci,
-        'timeout_ci': timeout_ci
+        'L_ci': L_ci
     }
 
 

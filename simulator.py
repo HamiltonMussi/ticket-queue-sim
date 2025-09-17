@@ -68,11 +68,7 @@ class TicketQueueSimulator:
                 
                 job.finish_time = env.now
                 self.worker_busy_time += (env.now - start_time)
-                
-                # Timeout detection: > 160s
-                if job.service_time > 160.0:
-                    job.timed_out = True
-                
+
                 self.completed_jobs.append(job)
     
     def monitor(self, env, queue):
