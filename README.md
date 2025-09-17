@@ -75,3 +75,66 @@ This project develops a simulation for an e-commerce ticket order system that us
 - **System-level samples**: queue length and worker utilization collected every 10 seconds
 - **Aggregated metrics**: calculated at the end of each simulation run
 
+## Simulation Scenarios
+
+### 1. Normal Scenario (Baseline)
+- **Workers**: 200
+- **Arrival rate**: 0.0315 jobs/s (real system data)
+- **Service times**: Real system distribution (0.17s average)
+  - Purchase: 0.134s + Exp(10.66) = 0.228s average
+  - Expire: 0.087s + Exp(17.64) = 0.144s average
+- **Purpose**: Baseline performance under normal conditions
+- **Expected results**: Very low utilization, minimal response times
+
+### 2. Extreme Degradation - 200 Workers
+- **Workers**: 200 (same capacity)
+- **Arrival rate**: 0.63 jobs/s (20x normal traffic)
+- **Service times**: ~50x slower (8.7s average, simulating DB overload)
+  - Purchase: 6.7s + Exp(0.21) = 11.5s average
+  - Expire: 4.3s + Exp(0.35) = 7.2s average
+- **Purpose**: Test system resilience under severe performance degradation
+- **Expected results**: High response times but stable throughput
+
+### 3. Extreme Degradation - 1 Worker
+- **Workers**: 1 (severe capacity constraint)
+- **Arrival rate**: 0.63 jobs/s (same high traffic)
+- **Service times**: ~50x slower (same degradation)
+  - Purchase: 6.7s + Exp(0.21) = 11.5s average
+  - Expire: 4.3s + Exp(0.35) = 7.2s average
+- **Purpose**: Demonstrate system collapse under capacity bottleneck
+- **Expected results**: System instability, infinite queue growth, very high response times
+
+## Results
+
+### Performance Comparison
+
+| Scenario | Workers | Arrival Rate | W (Response Time) | X (Throughput) | ρ (Utilization) | L (Queue Length) |
+|----------|---------|--------------|-------------------|----------------|-----------------|------------------|
+| Normal | 200 | 0.032 jobs/s | 0.17s | 0.031 jobs/s | 0.000 | 0.0 |
+| Extreme (200w) | 200 | 0.630 jobs/s | 8.63s | 0.627 jobs/s | 0.027 | 0.0 |
+| Extreme (1w) | 1 | 0.630 jobs/s | 1483s | 0.120 jobs/s | 0.999 | 925.9 |
+
+### Response Time by Job Type
+
+| Scenario | Purchase Time | Expire Time | Weighted Average |
+|----------|---------------|-------------|------------------|
+| Normal | 0.23s | 0.14s | 0.17s |
+| Extreme (200w) | 11.42s | 7.15s | 8.63s |
+| Extreme (1w) | 1467s | 1491s | 1483s |
+
+### Degradation Analysis
+
+| Metric | Normal to Extreme (200w) | Normal to Extreme (1w) | Extreme (200w) to Extreme (1w) |
+|--------|-------------------------|----------------------|------------------------------|
+| Response Time Factor | 50.8x slower | 8724x slower | 171.9x slower |
+| Throughput Factor | 20.2x higher | 3.9x higher | 0.19x (collapse) |
+| Utilization Factor | - | - | 37.0x higher |
+
+### Key Insights
+
+1. **Performance vs. Capacity**: 50x service degradation is manageable with adequate capacity (200 workers)
+2. **Capacity Bottleneck**: Same degradation with insufficient capacity (1 worker) causes complete system collapse
+3. **Queue Formation**: High capacity prevents queue buildup even under extreme degradation
+4. **Utilization**: System can operate efficiently at low utilization but fails when saturated with only 1 worker
+5. **Throughput**: Adequate capacity maintains target throughput despite performance degradation
+
