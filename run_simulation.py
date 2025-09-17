@@ -5,7 +5,7 @@ import random
 import numpy as np
 from scipy import stats
 from simulator import TicketQueueSimulator
-from config import NORMAL_SCENARIO, PEAK_SCENARIO
+from config import SCENARIO
 from models import JobType
 
 
@@ -91,29 +91,14 @@ def analyze_results(results, scenario_name):
     }
 
 
-def compare_scenarios(normal_stats, peak_stats):
-    """Compare scenarios"""
-    print(f"\n=== SCENARIO COMPARISON ===")
-    print(f"Degradation Factor (W_peak/W_normal): {peak_stats['W']/normal_stats['W']:.2f}")
-    print(f"Utilization Growth (ρ_peak/ρ_normal): {peak_stats['rho']/normal_stats['rho']:.2f}")
-    print(f"Timeout Impact: {peak_stats['timeout_rate'] - normal_stats['timeout_rate']:.2f}%")
-
 
 if __name__ == "__main__":
     print("Ticket Queue Simulation")
     print("======================")
-    
-    # Run normal scenario
-    print("\n1. Running NORMAL scenario...")
-    normal_results = run_experiment(NORMAL_SCENARIO, num_replications=30)
-    normal_stats = analyze_results(normal_results, "normal")
-    
-    # Run peak scenario  
-    print("\n2. Running PEAK scenario...")
-    peak_results = run_experiment(PEAK_SCENARIO, num_replications=30)
-    peak_stats = analyze_results(peak_results, "peak")
-    
-    # Compare scenarios
-    compare_scenarios(normal_stats, peak_stats)
-    
+
+    # Run simulation with real system parameters
+    print("\nRunning simulation with real system parameters...")
+    results = run_experiment(SCENARIO, num_replications=30)
+    analyze_results(results, "Real System")
+
     print("\nSimulation completed!")
