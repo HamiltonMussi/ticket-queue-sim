@@ -43,15 +43,26 @@ class TicketQueueSimulator:
                 yield req
                 job.start_time = env.now
                 
-                # Service time: Exponential(μ_i) based on job type
-                service_rates = {
-                    JobType.PURCHASE: self.config['mu_purchase'],
-                    JobType.EXPIRE: self.config['mu_expire'],
-                    JobType.REFUND: self.config['mu_refund'],
-                    JobType.CHARGEBACK: self.config['mu_chargeback']
+                # Service time: Shifted Exponential based on job type
+                # time = shift + Exponential(rate)
+                shift_params = {
+                    JobType.PURCHASE: self.config['shift_purchase'],
+                    JobType.EXPIRE: self.config['shift_expire'],
+                    JobType.REFUND: self.config['shift_refund'],
+                    JobType.CHARGEBACK: self.config['shift_chargeback']
                 }
-                
-                service_time = random.expovariate(service_rates[job.job_type])
+
+                rate_params = {
+                    JobType.PURCHASE: self.config['rate_purchase'],
+                    JobType.EXPIRE: self.config['rate_expire'],
+                    JobType.REFUND: self.config['rate_refund'],
+                    JobType.CHARGEBACK: self.config['rate_chargeback']
+                }
+
+                shift = shift_params[job.job_type]
+                rate = rate_params[job.job_type]
+                exponential_component = random.expovariate(rate)
+                service_time = shift + exponential_component
                 start_time = env.now
                 yield env.timeout(service_time)
                 
