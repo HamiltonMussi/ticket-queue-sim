@@ -11,18 +11,16 @@ This project develops a simulation for an e-commerce ticket order system that us
     - expire
 - There are 200 workers
 - Discipline: FIFO (first-in-first-out)
-- Timeout: the default is 160s and the max is 600s
-- Retry: exponential backoff (base 1s)
 
-## Defined Parameters
-### Arrival Rate (λ)
-- it is the total amount of jobs that arrive in a determined amount of time
-### Service Rate (μ)
-- average time that it takes for a job to be processed
-- μ_purchase, μ_expire, μ_refund, μ_chargeback
-### Jobs Distribution (π)
-- the percentage that each possible job corresponds in the total
-- π_purchase, π_expire, π_refund, π_chargeback
+## System Modelling
+- The random variables analyzed are:
+    - Arrival Rate (the total number of jobs that arrive in a given time period)
+    - Service Rate (average time that it takes for a job to be processed)
+    - Job Distribution (percentage that each job type represents in the total)
+- Using a small sample of 100 jobs from the real system, the following distributions could be obtained:
+![Distribution validation](/distribution_validation.png)
+- Due to the small sample size, the distribution classification doesn't show a very good fit, but it can be estimated that the Arrival Rate and Service Rate follow an exponential distribution.
+- Also, the sample does not have any occurrences of refund and chargeback jobs. Therefore, these job types will be considered irrelevant for this study. As can be seen, 65% of the jobs were expire, and 35% were purchase.
 
 ## Performance Metrics
 ### Main Metrics
@@ -34,9 +32,6 @@ This project develops a simulation for an e-commerce ticket order system that us
 ### Metrics by Job Type
 - **W_i** = average response time for job type i (purchase, expire, refund, chargeback)
 - **X_i** = throughput for job type i (completed jobs per second)
-
-### Reliability Metrics
-- **Timeout Rate** = percentage of jobs that exceeded 160s processing time
 
 ### Variability Metrics
 - **σ_W** = standard deviation of response times
@@ -61,22 +56,22 @@ This project develops a simulation for an e-commerce ticket order system that us
 - **Job type selection**: each arriving job is assigned a type using Multinomial distribution with probabilities [π_purchase, π_expire, π_refund, π_chargeback]
 
 ### Service Process
-- **Service times**: Exponentially distributed per job type
-    - purchase jobs: μ_purchase (average 1/μ_purchase seconds)
-    - expire jobs: μ_expire (average 1/μ_expire seconds)
-    - refund jobs: μ_refund (average 1/μ_refund seconds)
-    - chargeback jobs: μ_chargeback (average 1/μ_chargeback seconds)
-- **Workers**: 200 identical servers processing jobs in parallel
+- **Service times**: Shifted Exponential distribution per job type
+    - purchase jobs: shift + Exponential(rate_purchase)
+    - expire jobs: shift + Exponential(rate_expire)
+    - refund jobs: shift + Exponential(rate_refund)
+    - chargeback jobs: shift + Exponential(rate_chargeback)
+- **Workers**: Configurable number of identical servers processing jobs in parallel
 - **Queue discipline**: FIFO (first-in-first-out)
 
 ### System Components
 - **Job Generator**: creates jobs according to Poisson(λ) and assigns types using π distribution
 - **Queue**: unlimited capacity FIFO buffer storing waiting jobs
-- **Worker Pool**: 200 parallel workers that process jobs according to their type-specific service rates
-- **Timeout Detection**: jobs that exceed 160s processing time are marked as timed out
+- **Worker Pool**: configurable number of parallel workers that process jobs according to their type-specific service rates
 - **Metrics Collector**: continuously collects performance data during simulation
 
 ### Data Collection
 - **Job-level data**: arrival time, start time, finish time, job type, timeout status
 - **System-level samples**: queue length and worker utilization collected every 10 seconds
 - **Aggregated metrics**: calculated at the end of each simulation run
+
