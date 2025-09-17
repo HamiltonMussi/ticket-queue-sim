@@ -5,7 +5,7 @@ import random
 import numpy as np
 from scipy import stats
 from simulator import TicketQueueSimulator
-from config import SCENARIO
+from config import SCENARIO, EXTREME_DEGRADATION_200W, EXTREME_DEGRADATION_1W
 from models import JobType
 
 
@@ -96,5 +96,15 @@ if __name__ == "__main__":
     print("\nRunning simulation with real system parameters...")
     results = run_experiment(SCENARIO, num_replications=30)
     analyze_results(results, "Real System")
+
+    # Run simulation with extreme degradation - 200 workers
+    print("\nRunning simulation with extreme degradation - 200 workers...")
+    results = run_experiment(EXTREME_DEGRADATION_200W, num_replications=30)
+    analyze_results(results, "Extreme Degradation - 200 Workers")
+
+    # Run simulation with extreme degradation - 1 worker
+    print("\nRunning simulation with extreme degradation - 1 worker...")
+    results = run_experiment(EXTREME_DEGRADATION_1W, num_replications=30)
+    analyze_results(results, "Extreme Degradation - 1 Worker")
 
     print("\nSimulation completed!")
