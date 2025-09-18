@@ -4,9 +4,9 @@ Run ticket queue simulation experiments
 import random
 import numpy as np
 from scipy import stats
-from simulator import TicketQueueSimulator
-from config import SCENARIO, EXTREME_DEGRADATION_200W, EXTREME_DEGRADATION_1W
-from models import JobType
+from .simulator import TicketQueueSimulator
+from .config import SCENARIO, EXTREME_DEGRADATION_200W, EXTREME_DEGRADATION_1W
+from .models import JobType
 
 
 def run_experiment(scenario, num_replications=30, simulation_time=3600):

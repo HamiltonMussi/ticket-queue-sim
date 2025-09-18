@@ -3,7 +3,7 @@ Ticket queue simulator - M/G/200 system
 """
 import simpy
 import random
-from models import Job, JobType, Metrics
+from .models import Job, JobType, Metrics
 
 
 class TicketQueueSimulator:
