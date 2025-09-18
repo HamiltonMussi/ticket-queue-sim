@@ -5,10 +5,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+from pathlib import Path
 
 def load_and_clean_data():
     """Load and preprocess the validation data"""
-    df = pd.read_csv('validation_data.csv')
+    root = Path(__file__).resolve().parent.parent
+    df = pd.read_csv(root / 'validation_data.csv')
     df.columns = df.columns.str.strip()
 
     # Convert timestamps from milliseconds to seconds
@@ -148,8 +150,10 @@ def create_validation_plots(df, lambda_est, service_rates):
     axes[1,2].set_visible(False)
 
     plt.tight_layout()
-    plt.savefig('distribution_validation.png', dpi=300, bbox_inches='tight')
-    print(f"\nPlots saved as 'distribution_validation.png'")
+    out = Path(__file__).resolve().parent.parent / 'outputs'
+    out.mkdir(parents=True, exist_ok=True)
+    plt.savefig(out / 'distribution_validation.png', dpi=300, bbox_inches='tight')
+    print(f"\nPlots saved as 'outputs/distribution_validation.png'")
 
 def generate_config_parameters(lambda_est, job_proportions, service_rates):
     """Generate clean configuration parameters"""
